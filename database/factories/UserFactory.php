@@ -2,43 +2,40 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Random\RandomException;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
-
-    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
+     * @throws RandomException
      */
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'name'              => fake()->name(),
+            'nid'               => $this->generateUniqueNid(),
+            'email'             => fake()->unique()->safeEmail(),
+            'phone'             => fake()->unique()->phoneNumber(),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * @throws RandomException
      */
-    public function unverified(): static
+    private function generateUniqueNid(): string
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        do {
+            $nid = random_int(1, 9) . str_pad(random_int(0, 999999999), 9, '0', STR_PAD_LEFT);
+        } while (User::query()->where('nid', $nid)->exists());
+
+        return $nid;
     }
 }
