@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\MarkVaccinated;
 use App\Console\Commands\ScheduleAppointments;
 use App\Console\Commands\SendScheduledVaccineEmails;
 use Illuminate\Console\Scheduling\Schedule;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // NOTE: everyMinute just for testing; change to hourly for production
         $schedule->command(ScheduleAppointments::class)->everyMinute();
         $schedule->command(SendScheduledVaccineEmails::class)->dailyAt('21:00');
+        $schedule->command(MarkVaccinated::class)->dailyAt('20:00');
     })
     ->withMiddleware(function (Middleware $middleware) {
         //
