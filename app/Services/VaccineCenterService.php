@@ -10,7 +10,9 @@ readonly class VaccineCenterService
 {
     public function centers()
     {
-        return Cache::get(CacheKey::VACCINE_CENTERS->value) ?? VaccineCenter::all();
+        return Cache::remember(CacheKey::VACCINE_CENTERS->value, null, function () {
+            return VaccineCenter::all();
+        });
     }
 
     public function centerById($centerId) {
