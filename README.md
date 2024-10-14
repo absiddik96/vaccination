@@ -1,66 +1,206 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# COVID Vaccine Registration System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a COVID vaccine registration system developed using Laravel. The application allows users to register for vaccinations, select vaccine centers, and check their registration status. 
 
-## About Laravel
+## Table of Contents
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Application](#running-the-application)
+- [Usage](#usage)
+- [Database Seeders](#database-seeders)
+- [Notes on Optimization](#notes-on-optimization)
+- [Future Enhancements](#future-enhancements)
+- [Testing](#testing)
+- [License](#license)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **User Registration**: Users can register for vaccination at a selected vaccine center.
+- **Vaccine Center Selection**: Users must choose a vaccine center with a daily limit.
+- **First Come First Serve Scheduling**: Users are scheduled based on registration time.
+- **Email Notifications**: Users receive an email notification the night before their scheduled vaccination date.
+- **Search Status**: Users can check their registration status using their NID.
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Prerequisites
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Make sure you have the following installed on your machine:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP >= 8.2
+- Composer
+- Laravel >= 11.x
+- MySQL or Sqlite
 
-## Laravel Sponsors
+## Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. Clone the repository:
 
-### Premium Partners
+   ```bash
+   git clone https://github.com/absiddik96/vaccination.git
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. Navigate to the project directory:
 
-## Contributing
+   ```bash
+   cd vaccination
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Install the dependencies:
 
-## Code of Conduct
+   ```bash
+   composer install
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Copy the `.env.example` file to `.env` and configure your database settings:
 
-## Security Vulnerabilities
+   ```bash
+   cp .env.example .env
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. Generate the application key:
+
+   ```bash
+   php artisan key:generate
+   ```
+
+6. Configure your database settings in the `.env` file:
+
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=your_database_host
+   DB_PORT=your_database_port
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_database_user
+   DB_PASSWORD=your_database_password
+   ```
+7. Configure your mail settings in the `.env` file:
+
+   ```
+   MAIL_MAILER=smtp
+   MAIL_HOST=your_mail_host
+   MAIL_PORT=your_mail_port
+   MAIL_USERNAME=your_mail_username
+   MAIL_PASSWORD=your_mail_password
+   MAIL_ENCRYPTION=your_mail_encryption
+   ```
+
+8. Run the migrations to create the necessary tables:
+
+   ```bash
+   php artisan migrate
+   ```
+
+9. Seed the database with vaccine centers:
+
+   ```bash
+   php artisan db:seed --class=VaccineCenterSeeder
+   ```
+
+## Running the Application
+
+To start the local development server, run:
+
+```bash
+php artisan serve
+```
+
+Visit `http://localhost:8000` in your browser to access the application.
+
+### Running Scheduled Tasks and Queues
+
+To run scheduled tasks and queue workers, you can use the following commands:
+
+1. **Schedule Work**:
+   ```bash
+   php artisan schedule:work
+   ```
+   This command will run the scheduled tasks defined in your application.
+
+2. **Queue Work**:
+   ```bash
+   php artisan queue:work
+   ```
+   This command will process jobs on the queue.
+
+Make sure to run these commands in separate terminal windows or sessions if you are running them simultaneously.
+
+## Usage
+
+1. **Register for Vaccination**:
+   - Navigate to the registration page.
+   - Fill in your details and select a vaccine center.
+   - Submit the form to register.
+
+2. **Check Registration Status**:
+   - Go to the search page.
+   - Enter your NID to see your vaccination status.
+
+## Database Seeders
+
+The application includes a seeder (`VaccineCenterSeeder`) that pre-populates the database with 25 vaccine centers. You can modify the seeder located at `database/seeders/VaccineCenterSeeder.php` to change the number of centers or their details.
+
+## Notes on Optimization
+
+For performance optimization, consider the following:
+
+- Use database indexing on frequently queried columns (e.g., NID).
+- Implement caching for frequently accessed data, such as vaccine center information.
+- Use queue jobs for sending emails to prevent blocking the request cycle.
+
+## Future Enhancements
+
+If an additional requirement for sending SMS notifications is introduced, the following changes would be needed:
+
+- Integrate a third-party SMS service (e.g., Twilio).
+- Create a service class to handle SMS notifications.
+- Update the notification logic to send both email and SMS.
+
+
+## Testing
+
+This project uses Pest for testing. To run the test suite, follow these steps:
+
+### Setting up the Testing Environment
+
+
+1. Copy the `.env.testing.example` file to `.env.testing`:
+
+   ```bash
+   cp .env.testing.example .env.testing
+   ```
+2. Generate the application key:
+
+   ```bash
+    php artisan key:generate --env=testing
+   ```
+   
+3. Configure your database settings in the `.env.testing` file:
+
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_database_user
+   DB_PASSWORD=your_database_password
+   ```
+
+4. Run the migrations to create the necessary tables:
+
+   ```bash
+   php artisan migrate --env=testing
+   ```
+
+### Running Tests
+
+Run the test suite with Pest by executing the following command:
+```bash
+php artisan test
+```
+
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
